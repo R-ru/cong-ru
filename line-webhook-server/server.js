@@ -2,14 +2,16 @@ const http = require('http');
 
 const LINE_IMAGES = {
   invitation: 'https://r-ru.github.io/cong-ru/invitation-card-1.jpg',
+  dressCode: 'https://r-ru.github.io/cong-ru/dress-code.jpg',
   directionsMap: 'https://r-ru.github.io/cong-ru/directions-map.jpg'
 };
 
 const DIRECTIONS_TEXT =
-  '芳庭路壹號莊園｜台中市北屯區民政里芳庭路1號\n\n' +
-  '𝑮𝒐𝒐𝒈𝒍𝒆 𝑴𝒂𝒑｜https://reurl.cc/6XNymV\n\n' +
+  '婚禮場地：芳庭路壹號莊園｜B廳\n' +
+  '婚禮地址：台中市北屯區民政里芳庭路1號\n' +
+  'Google Map：https://reurl.cc/6XNymV\n\n' +
   '場地設有停車空間 (˶ ᵔ ᵕ ᵔ ˶)\n' +
-  '採先到先停，抵達後請依現場指引停車';
+  '採先到先停，抵達後請依現場指引停車~';
 
 async function replyToLine(replyToken, messages) {
   const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
@@ -29,7 +31,8 @@ async function replyToLine(replyToken, messages) {
 function buildReply(text) {
   if (text === '婚禮資訊') {
     return [
-      { type: 'image', originalContentUrl: LINE_IMAGES.invitation, previewImageUrl: LINE_IMAGES.invitation }
+      { type: 'image', originalContentUrl: LINE_IMAGES.invitation, previewImageUrl: LINE_IMAGES.invitation },
+      { type: 'image', originalContentUrl: LINE_IMAGES.dressCode, previewImageUrl: LINE_IMAGES.dressCode }
     ];
   }
   if (text === '交通指南') {
