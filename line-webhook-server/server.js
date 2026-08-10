@@ -7,9 +7,9 @@ const LINE_IMAGES = {
 };
 
 const DIRECTIONS_TEXT =
-  '婚禮場地：芳庭路壹號莊園｜B廳\n' +
-  '婚禮地址：台中市北屯區民政里芳庭路1號\n' +
-  'Google Map：https://reurl.cc/6XNymV\n\n' +
+  '-婚禮場地：芳庭路壹號莊園-B廳\n' +
+  '-婚禮地址：台中市北屯區民政里芳庭路1號\n' +
+  '-Google Map：https://maps.app.goo.gl/juqoY9BHzJi2z3C27\n\n' +
   '場地設有停車空間 (˶ ᵔ ᵕ ᵔ ˶)\n' +
   '採先到先停，抵達後請依現場指引停車~';
 
