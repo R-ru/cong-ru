@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>照片上傳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=EB+Garamond:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf7f2;
+    --ink:#2c2620;
+    --muted:#8a8375;
+    --line:rgba(44,38,32,0.14);
+    --accent:#a2854f;
+    --accent-soft:rgba(162,133,79,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Noto Serif TC","PMingLiU",serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    max-width:520px;
+    margin:0 auto;
+    padding:56px 28px 72px;
+  }
+  header{
+    text-align:center;
+    margin-bottom:36px;
+  }
+  .eyebrow{
+    font-family:"EB Garamond",serif;
+    font-style:italic;
+    font-size:15px;
+    letter-spacing:3px;
+    color:var(--accent);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  h1{
+    margin:0;
+    font-size:30px;
+    font-weight:600;
+    letter-spacing:6px;
+    text-indent:6px;
+  }
+  .rule{
+    width:40px;
+    height:1px;
+    background:var(--accent);
+    margin:18px auto 0;
+  }
+  .sub{
+    margin-top:18px;
+    font-size:15px;
+    color:var(--muted);
+    line-height:2;
+    white-space:pre-wrap;
+  }
+
+  label.field-label{
+    display:block;
+    font-size:13px;
+    letter-spacing:2px;
+    color:var(--muted);
+    margin:28px 0 8px;
+  }
+  input[type="text"]{
+    width:100%;
+    font-family:"Noto Serif TC",serif;
+    font-size:17px;
+    padding:14px 16px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:#fff;
+    color:var(--ink);
+    outline:none;
+  }
+  input[type="text"]:focus{ border-color:var(--accent); }
+
+  .drop{
+    margin-top:8px;
+    border:1px dashed var(--line);
+    border-radius:2px;
+    background:#fff;
+    padding:36px 20px;
+    text-align:center;
+    cursor:pointer;
+  }
+  .drop:hover, .drop.dragover{ border-color:var(--accent); background:var(--accent-soft); }
+  .drop .icon{
+    width:34px;height:34px;margin:0 auto 12px;
+    stroke:var(--accent); stroke-width:1.4; fill:none;
+  }
+  .drop .txt{ font-size:15px; color:var(--ink); }
+  .drop .txt2{ margin-top:6px; font-size:13px; color:var(--muted); }
+  input[type="file"]{ display:none; }
+
+  #thumbs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:14px;
+  }
+  #thumbs .thumb{
+    width:72px;height:72px;
+    border-radius:2px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    position:relative;
+  }
+  #thumbs .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  button#submit{
+    width:100%;
+    margin-top:28px;
+    padding:16px;
+    font-family:"Noto Serif TC",serif;
+    font-size:17px;
+    letter-spacing:4px;
+    background:var(--ink);
+    color:#faf7f2;
+    border:none;
+    border-radius:2px;
+    cursor:pointer;
+  }
+  button#submit:disabled{ opacity:0.45; cursor:default; }
+
+  #status{
+    margin-top:18px;
+    text-align:center;
+    font-size:14px;
+    color:var(--muted);
+    line-height:1.8;
+    min-height:20px;
+  }
+  #status.success{ color:var(--accent); }
+  #status.error{ color:#a35b4a; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="eyebrow">Share Your Moment</div>
+    <h1>照片上傳</h1>
+    <div class="rule"></div>
+    <div class="sub">把你鏡頭裡的美好留在這裡
+一起收藏這天的每個瞬間 ♡</div>
+  </header>
+
+  <label class="field-label">你的稱呼（選填）</label>
+  <input type="text" id="name" placeholder="例如：新娘的大學同學">
+
+  <label class="field-label">選擇照片</label>
+  <div class="drop" id="drop">
+    <svg class="icon" viewBox="0 0 48 48"><rect x="6" y="10" width="36" height="28" rx="2"/><circle cx="16" cy="19" r="3"/><path d="M42 30l-10-9-8 7-6-5-12 10"/></svg>
+    <div class="txt">點一下選擇照片</div>
+    <div class="txt2">可一次選多張</div>
+  </div>
+  <input type="file" id="file" accept="image/*" multiple>
+  <div id="thumbs"></div>
+
+  <button id="submit" disabled>上　傳</button>
+  <div id="status"></div>
+
+</div>
+
+<script>
+  var UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbySerk37DASTcpHwATsgc0e3jXk5HLg3yuwCFjloyeFN_ZFEmAV0KdEOMT7oGzDkDtj/exec';
+
+  var drop = document.getElementById('drop');
+  var fileInput = document.getElementById('file');
+  var thumbs = document.getElementById('thumbs');
+  var submitBtn = document.getElementById('submit');
+  var statusEl = document.getElementById('status');
+  var nameInput = document.getElementById('name');
+  var selectedFiles = [];
+
+  drop.addEventListener('click', function () { fileInput.click(); });
+  fileInput.addEventListener('change', function () {
+    selectedFiles = Array.prototype.slice.call(fileInput.files);
+    renderThumbs();
+  });
+
+  function renderThumbs() {
+    thumbs.innerHTML = '';
+    submitBtn.disabled = selectedFiles.length === 0;
+    selectedFiles.forEach(function (f) {
+      var div = document.createElement('div');
+      div.className = 'thumb';
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(f);
+      div.appendChild(img);
+      thumbs.appendChild(div);
+    });
+  }
+
+  function resizeAndEncode(file) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      var reader = new FileReader();
+      reader.onload = function (e) { img.src = e.target.result; };
+      reader.onerror = reject;
+      img.onload = function () {
+        var maxDim = 1920;
+        var w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        var base64 = dataUrl.split(',')[1];
+        resolve({ filename: (file.name || 'photo').replace(/\.[^.]+$/, '') + '.jpg', mimeType: 'image/jpeg', data: base64 });
+      };
+      img.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  submitBtn.addEventListener('click', async function () {
+    submitBtn.disabled = true;
+    statusEl.className = '';
+    var name = nameInput.value.trim();
+    var total = selectedFiles.length;
+    var done = 0;
+    var failed = 0;
+
+    for (var i = 0; i < selectedFiles.length; i++) {
+      statusEl.textContent = '上傳中… (' + (done + 1) + ' / ' + total + ')';
+      try {
+        var payload = await resizeAndEncode(selectedFiles[i]);
+        payload.uploader = name;
+        var res = await fetch(UPLOAD_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        var json = await res.json();
+        if (json.result !== 'ok') failed++;
+      } catch (err) {
+        failed++;
+      }
+      done++;
+    }
+
+    if (failed === 0) {
+      statusEl.className = 'success';
+      statusEl.textContent = '上傳完成，謝謝你的分享 ♡';
+      selectedFiles = [];
+      thumbs.innerHTML = '';
+      fileInput.value = '';
+    } else if (failed < total) {
+      statusEl.className = 'error';
+      statusEl.textContent = '部分照片上傳失敗（' + failed + ' / ' + total + '），可以再試一次';
+      submitBtn.disabled = false;
+    } else {
+      statusEl.className = 'error';
+      statusEl.textContent = '上傳失敗，請檢查網路後再試一次';
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
