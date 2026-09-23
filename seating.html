@@ -4,32 +4,222 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>座位查詢</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=EB+Garamond:ital@1&display=swap" rel="stylesheet">
 <style>
+  :root{
+    --bg:#faf7f2;
+    --ink:#2c2620;
+    --muted:#8a8375;
+    --line:rgba(44,38,32,0.14);
+    --accent:#a2854f;
+    --accent-soft:rgba(162,133,79,0.10);
+  }
+  *{box-sizing:border-box;}
   html,body{
     margin:0;
     padding:0;
-    min-height:100%;
-    background:#faf7f2;
-    font-family: "Noto Serif TC", "PMingLiU", serif;
-    color:#2c2620;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Noto Serif TC","PMingLiU",serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    max-width:520px;
+    margin:0 auto;
+    padding:56px 28px 72px;
+  }
+  header{
+    text-align:center;
+    margin-bottom:40px;
+  }
+  .eyebrow{
+    font-family:"EB Garamond",serif;
+    font-style:italic;
+    font-size:15px;
+    letter-spacing:3px;
+    color:var(--accent);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  h1{
+    margin:0;
+    font-size:32px;
+    font-weight:600;
+    letter-spacing:6px;
+    text-indent:6px;
+  }
+  .rule{
+    width:40px;
+    height:1px;
+    background:var(--accent);
+    margin:18px auto 0;
+  }
+  .sub{
+    margin-top:16px;
+    font-size:15px;
+    color:var(--muted);
+    line-height:1.8;
+  }
+
+  .search-box{
+    position:relative;
+    margin-bottom:8px;
+  }
+  input#q{
+    width:100%;
+    font-family:"Noto Serif TC",serif;
+    font-size:19px;
+    letter-spacing:1px;
+    padding:16px 18px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:#fff;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .2s ease;
+  }
+  input#q:focus{
+    border-color:var(--accent);
+  }
+  input#q::placeholder{
+    color:#b7b0a2;
+  }
+
+  #results{
+    margin-top:28px;
+    min-height:40px;
+  }
+  .hint{
+    text-align:center;
+    color:var(--muted);
+    font-size:15px;
+    padding:24px 8px;
+    line-height:1.9;
+  }
+  .result-row{
     display:flex;
     align-items:center;
-    justify-content:center;
+    justify-content:space-between;
+    padding:18px 20px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:#fff;
+    margin-bottom:10px;
   }
-  .wrap{
-    max-width:520px;
-    padding:56px 32px;
+  .result-name{
+    font-size:19px;
+    letter-spacing:1px;
+    font-weight:500;
+  }
+  .result-table{
+    font-family:"EB Garamond",serif;
+    font-style:italic;
+    font-size:22px;
+    color:var(--accent);
+    font-weight:600;
+    white-space:nowrap;
+    margin-left:16px;
+  }
+  .no-match{
     text-align:center;
-    line-height:2;
-    white-space:pre-wrap;
-    font-size:18px;
+    padding:28px 8px;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.9;
+  }
+
+  .chart-section{
+    margin-top:56px;
+    padding-top:36px;
+    border-top:1px solid var(--line);
+    text-align:center;
+  }
+  .chart-section .eyebrow{margin-bottom:10px;}
+  .chart-section h2{
+    margin:0 0 6px;
+    font-size:20px;
+    font-weight:600;
+    letter-spacing:4px;
+  }
+  .chart-note{
+    font-size:14px;
+    color:var(--muted);
+    margin-bottom:22px;
+  }
+  .chart-frame{
+    border:1px solid var(--line);
+    border-radius:2px;
+    overflow:hidden;
+    background:#fff;
+  }
+  .chart-frame img{
+    width:100%;
+    display:block;
   }
 </style>
 </head>
 <body>
-<div class="wrap">座位準備中ෆ⸒⸒⸜( ˶'ᵕ'˶)⸝
-待座位確認完成後，我們會第一時間更新於此~
+<div class="page">
 
-到時候再回來查詢你的座位就可以囉 ♡</div>
+  <header>
+    <div class="eyebrow">Find Your Seat</div>
+    <h1>座位查詢</h1>
+    <div class="rule"></div>
+    <div class="sub">請輸入您的姓名<br>即可查詢您的桌次</div>
+  </header>
+
+  <div class="search-box">
+    <input id="q" type="text" placeholder="輸入姓名" autocomplete="off">
+  </div>
+
+  <div id="results">
+    <div class="hint">在上方輸入姓名開始查詢</div>
+  </div>
+
+  <div class="chart-section">
+    <div class="eyebrow">Venue Layout</div>
+    <h2>會場座位圖</h2>
+    <div class="chart-note">僅供參考現場相對位置</div>
+    <div class="chart-frame">
+      <img src="table-chart.jpg" alt="會場座位圖">
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var GUESTS = [{"n":"鄧兆琮","t":"主桌"},{"n":"温棠如","t":"主桌"},{"n":"鄧俊雄","t":"主桌"},{"n":"洪文英","t":"主桌"},{"n":"陳澄寮","t":"主桌"},{"n":"鄧秀惠","t":"主桌"},{"n":"江國元","t":"主桌"},{"n":"温文英","t":"主桌"},{"n":"岳文慧","t":"主桌"},{"n":"黃雲鈞","t":"主桌"},{"n":"鄧秀蘭","t":"1桌"},{"n":"林永昇","t":"1桌"},{"n":"黃于榕","t":"1桌"},{"n":"林子祥","t":"1桌"},{"n":"林群崴","t":"1桌"},{"n":"林淑萍","t":"1桌"},{"n":"林永和","t":"1桌"},{"n":"林芸均","t":"1桌"},{"n":"黃俊豪","t":"2桌"},{"n":"劉維益","t":"2桌"},{"n":"黃維新","t":"2桌"},{"n":"鄭鈞安","t":"2桌"},{"n":"黃宏睿","t":"2桌"},{"n":"黃子珊","t":"2桌"},{"n":"蔡涵任","t":"2桌"},{"n":"謝宗翰","t":"3桌"},{"n":"吳承安","t":"3桌"},{"n":"張桓瑀","t":"3桌"},{"n":"蘇成峰","t":"3桌"},{"n":"陳建霖","t":"3桌"},{"n":"陳廷睿","t":"3桌"},{"n":"周哲伃","t":"3桌"},{"n":"賴岳暐","t":"3桌"},{"n":"陳柏翰","t":"3桌"},{"n":"陳弘岳","t":"3桌"},{"n":"蘇櫻琪","t":"5桌"},{"n":"劉秋吟","t":"5桌"},{"n":"張登發","t":"5桌"},{"n":"吳錦津","t":"5桌"},{"n":"賴雪美","t":"5桌"},{"n":"吳美雲","t":"5桌"},{"n":"張沛晴","t":"5桌"},{"n":"羅麗好","t":"5桌"},{"n":"林燕靜","t":"5桌"},{"n":"林霈琪","t":"5桌"},{"n":"洪惠美","t":"6桌"},{"n":"洪惠寶","t":"6桌"},{"n":"李珮儀","t":"6桌"},{"n":"李俊中","t":"6桌"},{"n":"吳建德","t":"6桌"},{"n":"吳洪藩桂","t":"6桌"},{"n":"王春蘭","t":"6桌"},{"n":"高啟豪","t":"6桌"},{"n":"吳志峰","t":"6桌"},{"n":"鄧秀祐","t":"7桌"},{"n":"江宗展","t":"7桌"},{"n":"江建宏","t":"7桌"},{"n":"江育傑","t":"7桌"},{"n":"江孟昕","t":"7桌"},{"n":"江文龍","t":"7桌"},{"n":"蔡家恩","t":"7桌"},{"n":"江帝衡","t":"7桌"},{"n":"鄧景明","t":"7桌"},{"n":"鄧景名","t":"7桌"},{"n":"蕭丞志","t":"8桌"},{"n":"張櫻瀞","t":"8桌"},{"n":"劉庭煒","t":"8桌"},{"n":"吳仲哲","t":"8桌"},{"n":"鍾郁涵","t":"8桌"},{"n":"鐘于雯","t":"8桌"},{"n":"黃彥豪","t":"8桌"},{"n":"陳室澄","t":"9桌"},{"n":"張妙綺","t":"9桌"},{"n":"陳芃融","t":"9桌"},{"n":"曹元碩","t":"9桌"},{"n":"賴人禾","t":"9桌"},{"n":"翁廷睿","t":"9桌"},{"n":"程晴","t":"9桌"},{"n":"翁紹安","t":"9桌"},{"n":"程建榮","t":"9桌"},{"n":"李崴紳","t":"9桌"},{"n":"高予貞","t":"10桌"},{"n":"王穎晟","t":"10桌"},{"n":"游子君","t":"10桌"},{"n":"柯宇駿","t":"10桌"},{"n":"柯昊霖","t":"10桌"},{"n":"游家洋","t":"10桌"},{"n":"古庭羽","t":"10桌"},{"n":"游子傑","t":"10桌"},{"n":"李珮瑜","t":"11桌"},{"n":"黃于禎","t":"11桌"},{"n":"孫藝庭","t":"11桌"},{"n":"吳博融","t":"11桌"},{"n":"楊采諳","t":"11桌"},{"n":"楊采諭","t":"11桌"},{"n":"陳吟瑄","t":"11桌"},{"n":"莊晏彤","t":"11桌"},{"n":"吳游淮","t":"11桌"},{"n":"何敏菲","t":"12桌"},{"n":"王秋謹","t":"12桌"},{"n":"梁惠汶","t":"12桌"},{"n":"周韋辰","t":"12桌"},{"n":"李孟瑾","t":"12桌"},{"n":"張博雅","t":"12桌"},{"n":"李蘊庭","t":"12桌"},{"n":"林淑芬","t":"12桌"},{"n":"林育存","t":"12桌"},{"n":"鍾欣哲","t":"13桌"},{"n":"邱玟瑜","t":"13桌"},{"n":"伍皓嶽","t":"13桌"},{"n":"葉家琪","t":"13桌"},{"n":"洪郡翎","t":"13桌"},{"n":"鄧兆貽","t":"13桌"},{"n":"林育甄","t":"13桌"},{"n":"陳永慶","t":"13桌"},{"n":"卓席妗","t":"14桌"},{"n":"洪子紜","t":"14桌"},{"n":"盧佳吟","t":"14桌"},{"n":"張雅鈞","t":"14桌"},{"n":"温欣蓉","t":"14桌"},{"n":"趙睿騰","t":"14桌"},{"n":"温奇祐","t":"14桌"},{"n":"温奇謚","t":"14桌"},{"n":"劉映伶","t":"14桌"},{"n":"江昆輯","t":"14桌"},{"n":"徐瑜璟","t":"15桌"},{"n":"周睿憲","t":"15桌"},{"n":"林家毅","t":"15桌"},{"n":"劉丞祐","t":"15桌"},{"n":"吳東翰","t":"15桌"},{"n":"沈佩芸","t":"15桌"},{"n":"林易靜","t":"15桌"},{"n":"林穎盈","t":"15桌"},{"n":"陸正芫","t":"15桌"},{"n":"林芸蒂","t":"15桌"}];
+
+  var input = document.getElementById('q');
+  var results = document.getElementById('results');
+
+  function render(query) {
+    query = query.trim();
+    if (!query) {
+      results.innerHTML = '<div class="hint">在上方輸入姓名開始查詢</div>';
+      return;
+    }
+    var matches = GUESTS.filter(function (g) {
+      return g.n.indexOf(query) !== -1;
+    });
+    if (matches.length === 0) {
+      results.innerHTML = '<div class="no-match">查無此姓名<br>請確認姓名輸入是否正確，或洽詢新人</div>';
+      return;
+    }
+    var seen = {};
+    var html = '';
+    matches.forEach(function (g) {
+      var key = g.n + '|' + g.t;
+      if (seen[key]) return;
+      seen[key] = true;
+      html += '<div class="result-row"><span class="result-name">' + g.n + '</span><span class="result-table">' + g.t + '</span></div>';
+    });
+    results.innerHTML = html;
+  }
+
+  input.addEventListener('input', function () { render(input.value); });
+</script>
 </body>
 </html>
